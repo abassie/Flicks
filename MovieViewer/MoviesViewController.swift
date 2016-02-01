@@ -10,12 +10,16 @@
 //
 //Use command shift K to clean files and command b to build if any of your imports are not autocompleting
 
+//push navigation keeps track of where we go and allows us to access history; must have navigation controller for this to work; use EDITOR, EMBED IN, NAVIGATION CONTROLLER
+//tab navigation: 2 independent channels of navigation; may use push navigation to have history for each tab
+//modal navigation: lightbox effect; screen comes up and can be dismissed
+
 
 
 import UIKit
 import AFNetworking
 import MBProgressHUD
- 
+
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
    
@@ -149,26 +153,45 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         //USER STORY: Poster images are loaded using the UIImageView category in the AFNetworking library.
       
-        //Use as! String to force the movie title to be a string so we can use it as a label for our table
-        let title = movie["title"] as! String
-        let overview = movie["overview"] as! String
         
-        let posterPath = movie["poster_path"] as! String
-        
-        let baseUrl = "http://image.tmdb.org/t/p/w500"
-        
-        let imageUrl = NSURL(string: baseUrl + posterPath)
-        
-        
+        let title = movie["title"] as? String
+        let overview = movie["overview"] as? String
         cell.titleLabel.text = title
         cell.overviewLabel.text = overview
-        cell.posterView.setImageWithURL(imageUrl!)
         
-        print("row \(indexPath.row)")
+        //Use if let with optionals. If poster path is nil, this code will be skipped and go to return cell
+        let baseUrl = "http://image.tmdb.org/t/p/w500"
+        
+        if let posterPath = movie["poster_path"] as? String {
+        
+        
+        //posterPath is a specific path appended to baseUrl to get specific poster image
+        let imageUrl = NSURL(string: baseUrl + posterPath)
+        cell.posterView.setImageWithURL(imageUrl!)
+        }
+        
         return cell
         
     }
+    
+    //use this function to determine which cell is selected
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        let cell = sender as! UITableViewCell
+        
+        //obtain index path from the cell
+        let indexPath = TableView.indexPathForCell(cell)
+        
+        //index into array to get correct movie
+        let movie = movies![indexPath!.row]
+        
+        //where the segue is going; cast the constant as DetailViewController so we can access the movie property of the detail view controller and set it to the movie we created here
+        let detailViewController = segue.destinationViewController as! DetailViewController
+        
+        //set the movie from DetailViewController = to the movie constant we made here
+        detailViewController.movie = movie
 }
 
-
+}
 
