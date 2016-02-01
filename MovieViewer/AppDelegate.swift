@@ -13,10 +13,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
+    //didFinishLaunch is the first method called when app awakens
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        window = UIwindow(frame: UIScreen.mainScreen().bounds)
+        //reference window so we can set initial view controller later
+        window = UIWindow(frame: UIScreen.mainScreen().bounds)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let nowPlayingNavigationController = storyboard.instantiateViewControllerWithIdentifier("MoviesNavigationController") as! UINavigationController
         
@@ -24,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let nowPlayingViewController = nowPlayingNavigationController.topViewController as! MoviesViewController
         nowPlayingViewController.endpoint = "now_playing"
         nowPlayingNavigationController.tabBarItem.title = "Now Playing"
+        nowPlayingNavigationController.tabBarItem.image = UIImage(named: "1454327316_play_now_sign_youtube_video")
         
         
         let topRatedNavigationController = storyboard.instantiateViewControllerWithIdentifier("MoviesNavigationController") as! UINavigationController
@@ -33,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let topRatedViewController = topRatedNavigationController.topViewController as! MoviesViewController
         topRatedViewController.endpoint = "top_rated"
         topRatedNavigationController.tabBarItem.title = "Top Rated"
+        topRatedNavigationController.tabBarItem.image = UIImage(named: "1454327197_topright")
         
         //initialize and create tabBarController with ()
         let tabBarController = UITabBarController()
