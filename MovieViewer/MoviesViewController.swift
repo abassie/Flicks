@@ -31,6 +31,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
      //make instance variables in the same location that IBOutlets are made. Instance variables can be seen and used throughout a class.
     
     var movies: [NSDictionary]?
+    var endpoint: String!
     
     let refreshControl = UIRefreshControl()
     var request = NSURLRequest()
@@ -49,8 +50,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         //USER STORY: User can view a list of movies currently playing in theaters from The Movie Database.
         
         //pasted code
+        // use \(variable) to access variables within a string
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = NSURL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let url = NSURL(string: "https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
         request = NSURLRequest(
             URL: url!,
             cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData,

@@ -14,7 +14,8 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var PosterImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var overviewLabel: UILabel!
-    
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var infoView: UIView!
     
     //! indicates that the optional must be unwrapped
     var movie: NSDictionary!
@@ -24,12 +25,17 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
 
         
+        //infoView was moved to y = 567 so that it would be below the image view. Make that number your height. append the same value to determine how far the scroll should go.
+        scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: infoView.frame.origin.y + infoView.frame.size.height)
+        
         //cast title as string; code pulls from NSDictionary and assigns correct key to corresponding label
         let title = movie["title"] as! String
         titleLabel.text = title
         
         let overview = movie["overview"] as! String
-        overviewLabel.text = overview         
+        overviewLabel.text = overview
+        overviewLabel.sizeToFit()
+        
         // print(movie) would print the selected movie to the console
         
         let baseUrl = "http://image.tmdb.org/t/p/w500"
