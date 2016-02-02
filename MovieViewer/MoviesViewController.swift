@@ -36,6 +36,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     let refreshControl = UIRefreshControl()
     var request = NSURLRequest()
     override func viewDidLoad() {
+        //every time you override the views will/did appear, call super
         super.viewDidLoad()
         
         
@@ -101,9 +102,22 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         })
         task.resume()
         //end pasted code
+        
+        
     
     }
-    
+    //because we are overriding, make sure we call it
+    override func viewWillAppear(animated: Bool) {
+      
+        super.viewWillAppear(animated)
+        
+        //use if let because when nothing is selected, there is no index
+        if let indexPath = TableView.indexPathForSelectedRow
+        {
+            //when animated is true, fading action happens
+            TableView.deselectRowAtIndexPath(indexPath, animated: true)
+        }
+    }
     
     // Makes a network request to get updated data
     // Updates the tableView with the new data
@@ -173,6 +187,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let imageUrl = NSURL(string: baseUrl + posterPath)
         cell.posterView.setImageWithURL(imageUrl!)
         }
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.purpleColor()
+        
+        cell.selectedBackgroundView = backgroundView
         
         return cell
         
