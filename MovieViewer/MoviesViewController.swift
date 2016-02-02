@@ -159,7 +159,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let title = movie["title"] as? String
         let overview = movie["overview"] as? String
         cell.titleLabel.text = title
+//        cell.titleLabel.sizeToFit()
         cell.overviewLabel.text = overview
+        
         
         //Use if let with optionals. If poster path is nil, this code will be skipped and go to return cell
         let baseUrl = "http://image.tmdb.org/t/p/w500"
