@@ -20,9 +20,10 @@ import UIKit
 import AFNetworking
 import MBProgressHUD
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
    
+    @IBOutlet weak var searchBar: UISearchBar!
     
     @IBOutlet weak var TableView: UITableView!
     
@@ -32,6 +33,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var movies: [NSDictionary]?
     var endpoint: String!
+    var filteredData: [NSDictionary]?
     
     let refreshControl = UIRefreshControl()
     var request = NSURLRequest()
@@ -40,12 +42,15 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         super.viewDidLoad()
         
         
+        
         refreshControl.addTarget(self, action: "refreshControlAction:", forControlEvents: UIControlEvents.ValueChanged)
         TableView.insertSubview(refreshControl, atIndex: 0)
         
         
         TableView.dataSource = self
         TableView.delegate = self
+        searchBar.delegate = self
+        
         
         
         //USER STORY: User can view a list of movies currently playing in theaters from The Movie Database.
@@ -82,6 +87,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                             
                             //video said to use exclamation point here
                             self.movies = (responseDictionary["results"] as! [NSDictionary])
+                            
+                            self.filteredData = self.movies
                             
                             //Must include this to allow app to reload after a network request is made.
                             self.TableView.reloadData()
@@ -151,8 +158,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         // Dispose of any resources that can be recreated.
     }
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
-        if let movies = movies {
-            return movies.count
+        if let filteredData = filteredData {
+            return filteredData.count
         } else {
             return 0
         }
@@ -160,11 +167,13 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
         let cell = tableView.dequeueReusableCellWithIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCellTableViewCell
+        let movie = filteredData![indexPath.row]
+        
         //tells us where the cell is in the index path; force unwrap to MovieCellTableViewCell
         
         
         //Obtain a single movie for the cell location; must use ! to unwrap the optional
-        let movie = movies![indexPath.row]
+        //let movie = movies![indexPath.row]
         
         
         //USER STORY: Poster images are loaded using the UIImageView category in the AFNetworking library.
@@ -215,6 +224,46 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         //set the movie from DetailViewController = to the movie constant we made here
         detailViewController.movie = movie
 }
+    
+    // This method updates filteredData based on the text in the Search Box
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        // When there is no text, filteredData is the same as the original data
+        if searchText.isEmpty {
+            filteredData = movies
+        } else {
+            // The user has entered text into the search box
+            // Use the filter method to iterate over all items in the data array
+            // For each item, return true if the item should be included and false if the
+            // item should NOT be included
+            filteredData = movies!.filter({(movie: NSDictionary) -> Bool in
+                // If dataItem matches the searchText, return true to include it
+                if let title = movie["title"] as? String{
+                    if title.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
+                        
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+                    return false
+                    
+            })
+            
+        }
+        
+        TableView.reloadData()
+    }
 
+
+func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    searchBar.showsCancelButton = true
 }
+
+func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    searchBar.showsCancelButton = false
+    searchBar.text = ""
+    searchBar.resignFirstResponder()
+}
+}
+
 
